@@ -1984,12 +1984,14 @@ namespace Exiv2 {
         Exiv2::Dictionary request;
         std::string errors;
         request["server"] = hostInfo_.Host;
-        request["page"  ] = hostInfo_.Path;
+				//Get urlencoded URI components
+				Exiv2::Uri uri = Exiv2::Uri::Parse(path_);
+        request["page"  ] = uri.Path + uri.QueryString;
         if (hostInfo_.Port != "") request["port"] = hostInfo_.Port;
         request["verb"]   = "HEAD";
         long serverCode = (long)http(request, response, errors);
         if (serverCode < 0 || serverCode >= 400 || errors.compare("") != 0) {
-            throw Error(55, "Server", serverCode);
+					return -1;
         }
 
         Exiv2::Dictionary_i lengthIter = response.find("Content-Length");
@@ -2001,7 +2003,9 @@ namespace Exiv2 {
         Exiv2::Dictionary responseDic;
         Exiv2::Dictionary request;
         request["server"] = hostInfo_.Host;
-        request["page"  ] = hostInfo_.Path;
+				//Get urlencoded URI components
+				Exiv2::Uri uri = Exiv2::Uri::Parse(path_);
+        request["page"  ] = uri.Path + uri.QueryString;
         if (hostInfo_.Port != "") request["port"] = hostInfo_.Port;
         request["verb"]   = "GET";
         std::string errors;
