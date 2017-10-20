@@ -85,8 +85,9 @@ WXMP_Result 		void_wResult;
 // ! Note that the mutex need not be "recursive", allowing the same thread to acquire it multiple
 // ! times. There is a single XMP lock which is acquired in the wrapper classes. Internal calls
 // ! never go back out to the wrappers.
+#ifdef EXIV2_ENABLE_THREAD_SAFITY
 
-#if XMP_WinBuild
+#  if XMP_WinBuild
 
 	bool XMP_InitMutex ( XMP_Mutex * mutex ) {
 		InitializeCriticalSection ( mutex );
@@ -105,7 +106,7 @@ WXMP_Result 		void_wResult;
 		LeaveCriticalSection ( &mutex );
 	}
 
-#else
+#  else
 
 	// Use pthread for both Mac and generic UNIX.
 	// ! Would be nice to specify PTHREAD_MUTEX_ERRORCHECK, but the POSIX documentation is useless.
@@ -130,8 +131,23 @@ WXMP_Result 		void_wResult;
 		if ( err != 0 ) XMP_Throw ( "XMP_ExitCriticalRegion - pthread_mutex_unlock failure", kXMPErr_ExternalFailure );
 	}
 
-#endif
+#  endif
+#else
 
+	bool XMP_InitMutex ( XMP_Mutex * /*mutex*/ ) {
+		return true;
+	}
+	
+	void XMP_TermMutex ( XMP_Mutex & /*mutex*/ ) {
+	}
+
+	void XMP_EnterCriticalRegion ( XMP_Mutex & /*mutex*/ ) {
+	}
+	
+	void XMP_ExitCriticalRegion ( XMP_Mutex & /*mutex*/ ) {
+	}
+
+#endif
 // =================================================================================================
 // Local Utilities
 // ===============

@@ -25,11 +25,14 @@
 #ifdef _MSC_VER
 #include <windows.h>
 #else
-#include <pthread.h>
+#  ifdef EXIV2_ENABLE_THREAD_SAFITY
+#    include <pthread.h>
+#  endif
 #endif
 
 namespace Exiv2 {
-#ifdef _MSC_VER
+#ifdef EXIV2_ENABLE_THREAD_SAFITY
+#  ifdef _MSC_VER
 /*
 Visual Studio 2013 and later use SRWLOCK, however don't use Vista/7+ features
 when targeting XP.
@@ -134,12 +137,12 @@ a newer SDK, such as 8.
 
             bool tryenter()
             {
-#if defined(MSDEV_2003) || defined(MSDEV_2005)
+#    if defined(MSDEV_2003) || defined(MSDEV_2005)
                 EnterCriticalSection(&lock_);
                 return true;
-#else
+#    else
                 return 0 != TryEnterCriticalSection(&lock_);
-#endif
+#    endif
             }
 
         private:
@@ -147,7 +150,7 @@ a newer SDK, such as 8.
         };
 #endif
 
-#else
+#  else
         /*!
          @brief Class to provide a Read-Write Lock
         */
@@ -206,6 +209,56 @@ a newer SDK, such as 8.
         private:
         	//! the lock itself
             pthread_rwlock_t rwlock_;
+        };
+#  endif
+#else
+        class RWLock
+        {
+        public:
+            //! constructor (acquires the lock)
+            RWLock(const pthread_rwlockattr_t *attr = 0)
+            {
+            }
+
+            //! constructor (releases lock)
+            ~RWLock()
+            {
+            }
+
+            //! acquire rw lock
+            void wrlock()
+            {
+            }
+
+            //! test to see if the rw lock can be acquired
+            bool trywrlock()
+            {
+                return true;
+            }
+
+            //! acquire rd lock
+            void rdlock()
+            {
+            }
+
+            //! test to see if the rd lock can be acquired
+            bool tryrdlock()
+            {
+                return true;
+            }
+
+            //! release rw lock
+            void unlock()
+            {
+            }
+
+            //! unlock rd lock
+            void rdunlock() { unlock(); }
+
+            //! unlock rw lock
+            void wrunlock() { unlock(); }
+
+        private:
         };
 #endif
 

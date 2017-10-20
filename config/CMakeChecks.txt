@@ -228,6 +228,7 @@ ENDIF( NOT MSVC )
 SET( EXV_SYMBOLS ENABLE_NLS
                  ENABLE_VIDEO
                  ENABLE_WEBREADY
+                 ENABLE_THREAD_SAFITY
                  HAVE_ALARM
                  HAVE_DECL_STRERROR_R
                  HAVE_GMTIME_R
@@ -332,6 +333,7 @@ OptionOutput( "Build the unit tests:               " EXIV2_ENABLE_BUILD_SAMPLES 
 OptionOutput( "Building translations files:        " EXIV2_ENABLE_BUILD_PO           )
 OptionOutput( "Building video support:             " EXIV2_ENABLE_VIDEO              )
 OptionOutput( "Building webready support:          " EXIV2_ENABLE_WEBREADY           )
+OptionOutput( "Build with thread safity support:   " EXIV2_ENABLE_WEBREADY           )
 
 if    ( EXIV2_ENABLE_WEBREADY )
 OptionOutput( "USE Libcurl for HttpIo:             " EXIV2_ENABLE_CURL               )

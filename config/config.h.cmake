@@ -33,6 +33,8 @@
 /* Define to 1 if you require webready support. */
 #cmakedefine EXV_ENABLE_WEBREADY 1
 
+#cmakedefine EXV_ENABLE_THREAD_SAFITY
+
 #ifndef EXV_COMMERCIAL_VERSION
 
 /* Define to 1 to enable translation of Nikon lens names. */

@@ -2039,26 +2039,29 @@ namespace {
         return os.str();
     } // tm2Str
 
+#ifdef EXIV2_ENABLE_THREAD_SAFITY
 // use static CS/MUTEX to make temporaryPath() thread safe
-#if defined(_MSC_VER) || defined(__MINGW__)
- static CRITICAL_SECTION cs;
-#else
- /* Unix/Linux/Cygwin/MacOSX */
- #include <pthread.h>
- #if defined(__APPLE__)
+    #if defined(_MSC_VER) || defined(__MINGW__)
+     static CRITICAL_SECTION cs;
+    #else
+     /* Unix/Linux/Cygwin/MacOSX */
+     #include <pthread.h>
+     #if defined(__APPLE__)
   /* This is the critical section object (statically allocated). */
   static pthread_mutex_t cs =  PTHREAD_RECURSIVE_MUTEX_INITIALIZER;
  #else
   static pthread_mutex_t cs =  PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
- #endif
+     #endif
+    #endif
 #endif
-
     static std::string temporaryPath()
     {
         static int  count = 0 ;
 
 #if defined(_MSC_VER) || defined(__MINGW__)
+#ifdef EXIV2_ENABLE_THREAD_SAFITY
         EnterCriticalSection(&cs);
+#endif        
         char lpTempPathBuffer[MAX_PATH];
         GetTempPath(MAX_PATH,lpTempPathBuffer);
         std::string tmp(lpTempPathBuffer);
@@ -2067,7 +2070,9 @@ namespace {
         DWORD  pid = ::GetProcessId(process);
 #else
         pid_t  pid = ::getpid();
+#ifdef EXIV2_ENABLE_THREAD_SAFITY
         pthread_mutex_lock( &cs );
+#endif        
         std::string tmp = "/tmp/";
 #endif
         char        sCount[12];
@@ -2076,12 +2081,13 @@ namespace {
         std::string result = tmp + Exiv2::toString(pid) + sCount ;
         if ( Exiv2::fileExists(result) ) std::remove(result.c_str());
 
-#if defined(_MSC_VER) || defined(__MINGW__)
-        LeaveCriticalSection(&cs);
-#else
-        pthread_mutex_unlock( &cs );
+#ifdef EXIV2_ENABLE_THREAD_SAFITY
+    #if defined(_MSC_VER) || defined(__MINGW__)
+            LeaveCriticalSection(&cs);
+    #else
+            pthread_mutex_unlock( &cs );
+    #endif
 #endif
-
         return result;
     }
 

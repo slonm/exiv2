@@ -25,8 +25,10 @@
 #if XMP_WinBuild
 	#include <windows.h>
 #else
+#  ifdef EXV_ENABLE_THREAD_SAFITY
 	// Use pthread for both Mac and generic UNIX.
 	#include <pthread.h>
+#  endif
 #endif
 
 #if XMP_WinBuild
@@ -203,8 +205,12 @@ extern WXMP_Result		void_wResult;
 #if XMP_WinBuild
 	typedef CRITICAL_SECTION XMP_Mutex;
 #else
+#  ifdef EXV_ENABLE_THREAD_SAFITY
 	// Use pthread for both Mac and generic UNIX.
 	typedef pthread_mutex_t XMP_Mutex;
+#  else
+	typedef char XMP_Mutex;	
+#  endif	
 #endif
 
 extern XMP_Mutex sXMPCoreLock;

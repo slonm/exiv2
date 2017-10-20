@@ -50,6 +50,8 @@ OPTION( EXIV2_ENABLE_BUILD_SAMPLES "Build the unit tests"                       
 OPTION( EXIV2_ENABLE_BUILD_PO      "Build translations files"                              OFF )
 OPTION( EXIV2_ENABLE_VIDEO         "Build video support into library"                      OFF )
 OPTION( EXIV2_ENABLE_WEBREADY      "Build webready support into library"                   OFF )
+OPTION( EXIV2_ENABLE_THREAD_SAFITY "Build with thread safity support"                      OFF )
+
 IF (WIN32)
     OPTION( EXIV2_ENABLE_DYNAMIC_RUNTIME  "Use dynamic runtime (used for static libs)"     OFF )
     OPTION( EXIV2_ENABLE_WIN_UNICODE   "Use Unicode paths (wstring) on Windows"            OFF )
